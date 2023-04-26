@@ -2,5 +2,6 @@
 {
     public class CompanyDTO
     {
+        public string Name { get; set; }
     }
 }

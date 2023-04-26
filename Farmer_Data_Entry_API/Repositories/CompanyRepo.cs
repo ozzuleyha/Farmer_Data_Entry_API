@@ -1,28 +1,66 @@
-﻿using Farmer_Data_Entry_API.DTOs;
+﻿using Dapper;
+using Farmer_Data_Entry_API.Context;
+using Farmer_Data_Entry_API.DTOs;
 using Farmer_Data_Entry_API.Entities;
+using System.Data;
 
 namespace Farmer_Data_Entry_API.Repositories
 {
     public class CompanyRepo : ICompanyRepo
     {
-        public Task<Company> CreateCompany(CompanyDTO company)
+        private readonly DapperContext _context;
+        public CompanyRepo(DapperContext context) => _context = context;
+        //Her birinde bir sp çağrılacak
+        public async Task<Company> CreateCompany(CompanyDTO company)
         {
-            throw new NotImplementedException();
+            var procedureName = "createCompany";
+            var parameters = new DynamicParameters();
+            parameters.Add("Name", company.Name, DbType.String);
+            using (var connection = _context.CreateConnection())
+            {
+                var createdCompany = await connection.QueryFirstOrDefaultAsync<Company>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+                return createdCompany;
+            }
         }
 
-        public Task DeleteCompany(int id)
+        public async Task DeleteCompany(int id)
         {
-            throw new NotImplementedException();
+            var procedureName = "deleteCompany";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id, DbType.Int32, ParameterDirection.Input);
+            using (var connection = _context.CreateConnection())
+            {
+                var company = await connection.ExecuteAsync(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            }
         }
 
-        public Task<IEnumerable<Company>> GetCompanies()
+        public async Task<IEnumerable<Company>> GetCompanies()
         {
-            throw new NotImplementedException();
+            var procedureName = "getCompanies";
+            
+            using (var connection = _context.CreateConnection())
+            {
+                var companies = await connection.QueryAsync<Company>(procedureName,  commandType: CommandType.StoredProcedure);
+
+                return companies.ToList();
+            }
         }
 
-        public Task<Company> GetCompany(Guid id)
+        //UID yapılacak idler
+
+
+        public async Task<Company> GetCompany(int id)
         {
-            throw new NotImplementedException();
+            var procedureName = "getCompany";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id, DbType.Int32, ParameterDirection.Input);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var company = await connection.QueryFirstOrDefaultAsync<Company>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+                
+                return company;
+            }
         }
 
         public Task UpdateCompany(int id, CompanyDTO company)
