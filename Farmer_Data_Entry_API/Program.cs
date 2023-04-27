@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 //Her repo tipini eklemek gerek
 builder.Services.AddScoped<ICompanyRepo, CompanyRepo>();
 builder.Services.AddScoped<IFarmerRepo, FarmerRepo>();
+builder.Services.AddScoped<IVillageRepo, VillageRepo>();
 builder.Services.AddSingleton<DapperContext>();
 var app = builder.Build();
 
