@@ -1,4 +1,5 @@
-﻿using Farmer_Data_Entry_API.Entities;
+﻿using Farmer_Data_Entry_API.DTOs;
+using Farmer_Data_Entry_API.Entities;
 using Farmer_Data_Entry_API.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,29 @@ namespace Farmer_Data_Entry_API.Controllers
             await _farmerRepo.DeleteFarmer(id);
             return NoContent();
         }
-        //[HttpGet("{id}")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetFarmer(Guid id)
+        {
+            var farmer = await _farmerRepo.GetFarmer(id);
+            if (farmer is null)
+            {
+                return NotFound();
+            }
+            return Ok(farmer);
+        }
         [HttpGet]
         public async Task<IActionResult> GetFarmers()
         {
             var farmers = await _farmerRepo.GetFarmers();
             return Ok(farmers);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateFarmer([FromBody] FarmerDTO farmer)
+        {
+            var createdFarmer = await _farmerRepo.CreateFarmer(farmer);
+            return Ok(createdFarmer);   
+        }
+
     }
 }
