@@ -1,33 +1,77 @@
-﻿using Farmer_Data_Entry_API.DTOs;
+﻿using Dapper;
+using Farmer_Data_Entry_API.Context;
+using Farmer_Data_Entry_API.DTOs;
 using Farmer_Data_Entry_API.Entities;
+using System.Data;
 
 namespace Farmer_Data_Entry_API.Repositories
 {
     public class VillageRepo : IVillageRepo
     {
-        public Task<Village> CreateVillage(VillageDTO company)
+
+        private readonly DapperContext _context;
+        public VillageRepo(DapperContext context) => _context = context;
+
+        public async Task<Village> CreateVillage(VillageDTO village)
         {
-            throw new NotImplementedException();
+            var procedureName = "createVillage";
+            var parameters = new DynamicParameters();
+            parameters.Add("Name", village.VillageName, DbType.String);
+            using (var connection = _context.CreateConnection())
+            {
+                var createdVillage = await connection.QueryFirstOrDefaultAsync<Village>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+                return createdVillage;
+            }
         }
 
-        public Task DeleteVillage(int id)
+        public async Task DeleteVillage(int id)
         {
-            throw new NotImplementedException();
+            var procedureName = "deleteVillage";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id, DbType.Int32, ParameterDirection.Input);
+            using (var connection = _context.CreateConnection())
+            {
+                var village = await connection.ExecuteAsync(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            }
         }
 
-        public Task<Village> GetVillage(int id)
+        public async Task<Village> GetVillage(int id)
         {
-            throw new NotImplementedException();
+            var procedureName = "getVillage";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id, DbType.Int32, ParameterDirection.Input);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var village = await connection.QueryFirstOrDefaultAsync<Village>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+
+                return village;
+            }
         }
 
-        public Task<IEnumerable<Village>> GetVillages()
+        public async Task<IEnumerable<Village>> GetVillages()
         {
-            throw new NotImplementedException();
+             var procedureName = "getVillages";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var villages = await connection.QueryAsync<Village>(procedureName, commandType: CommandType.StoredProcedure);
+
+                return villages.ToList();
+            }
         }
 
-        public Task UpdateVillage(int id, VillageDTO company)
+        public async Task<Village> UpdateVillage(int id, VillageDTO village)
         {
-            throw new NotImplementedException();
+            var procedureName = "updateVillage";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id, DbType.String);
+            parameters.Add("Name", village.VillageName, DbType.String);
+            using (var connection = _context.CreateConnection())
+            {
+                var updatedVillage = await connection.QueryFirstOrDefaultAsync<Village>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+                return updatedVillage;
+            }
         }
     }
 }

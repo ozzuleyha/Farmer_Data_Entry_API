@@ -2,5 +2,7 @@
 {
     public class VillageDTO
     {
+        public string VillageName { get; set; }
+
     }
 }

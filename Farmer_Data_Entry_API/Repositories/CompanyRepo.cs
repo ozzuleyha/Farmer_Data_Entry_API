@@ -63,9 +63,17 @@ namespace Farmer_Data_Entry_API.Repositories
             }
         }
 
-        public Task UpdateCompany(int id, CompanyDTO company)
+        public async Task<Company> UpdateCompany(int id, CompanyDTO company)
         {
-            throw new NotImplementedException();
+            var procedureName = "updateCompany";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id, DbType.String);
+            parameters.Add("Name", company.Name, DbType.String);
+            using (var connection = _context.CreateConnection())
+            {
+                var updatedCompany = await connection.QueryFirstOrDefaultAsync<Company>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+                return updatedCompany;
+            }
         }
     }
 }

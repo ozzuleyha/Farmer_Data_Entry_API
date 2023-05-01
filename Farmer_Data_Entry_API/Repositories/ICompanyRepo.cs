@@ -8,7 +8,7 @@ namespace Farmer_Data_Entry_API.Repositories
     {
         public Task<IEnumerable<Company>> GetCompanies();
         public Task<Company> GetCompany(int id);
-        public Task UpdateCompany(int id, CompanyDTO company);
+        public Task<Company> UpdateCompany(int id, CompanyDTO company);
         public Task DeleteCompany(int id);
         public Task<Company> CreateCompany(CompanyDTO company);
     }

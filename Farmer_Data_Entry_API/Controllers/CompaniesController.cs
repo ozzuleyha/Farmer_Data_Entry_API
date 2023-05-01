@@ -48,6 +48,12 @@ namespace Farmer_Data_Entry_API.Controllers
             var createdCompany = await _companyRepo.CreateCompany(company);
             return Ok(createdCompany);
         }
+        [HttpPut]
+        public async Task<IActionResult> UpdateCompany([FromBody]int id, CompanyDTO company)
+        {
+            var updatedCompany = await _companyRepo.UpdateCompany(id, company);
+            return Ok(updatedCompany);
+        }
 
 
     }
